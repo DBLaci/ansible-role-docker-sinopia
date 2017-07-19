@@ -1,0 +1,50 @@
+---
+
+- name: Create storage directory on host
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+    mode: 0700
+    owner: 100
+  with_items:
+    - "{{ docker_sinopia_host_path }}/storage"
+    - "{{ docker_sinopia_host_path }}/conf"
+
+- name: Set up config
+  template:
+    src: "config.yaml.j2"
+    dest: "{{ docker_sinopia_host_path }}/conf/config.yaml"
+    mode: 0600
+    owner: 100
+  notify: restart-sinopia
+
+
+
+
+#- debug: msg="{{ docker_sinopia_htpasswd_path  }}"
+
+- name: Check htpasswd and registration not enabled at the same time
+  fail:
+    msg: "docker_sinopia_htpasswd_path and docker_sinopia_registration must not be set together to prevent user loss!"
+  when: docker_sinopia_htpasswd_path and docker_sinopia_registration
+
+- name: Upload htpasswd
+  copy:
+    src: "{{ docker_sinopia_htpasswd_path }}"
+    dest: "{{ docker_sinopia_host_path }}/conf/htpasswd"
+    mode: 0600
+    owner: 100
+  when: docker_sinopia_htpasswd_path and not docker_sinopia_registration
+  notify: restart-sinopia
+
+- name: Install container
+  docker_container:
+    name: "{{ docker_sinopia_container_name }}"
+    image: "{{ docker_sinopia_image }}"
+    state: "started"
+    restart_policy: 'always'
+    volumes:
+      - "{{ docker_sinopia_host_path }}:/verdaccio"
+    ports:
+      - "{{ docker_sinopia_port }}:4873"

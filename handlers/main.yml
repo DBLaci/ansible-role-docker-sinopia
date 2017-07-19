@@ -1,0 +1,7 @@
+---
+
+- name: Restart Sinopia Container
+  listen: restart-sinopia
+  docker_container:
+    name: "{{ docker_sinopia_container_name }}"
+    restart: yes

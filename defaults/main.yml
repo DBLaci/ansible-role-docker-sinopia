@@ -1,0 +1,11 @@
+---
+
+docker_sinopia_host_path: /srv/verdaccio
+docker_sinopia_container_name: sinopia
+docker_sinopia_image: verdaccio/verdaccio:2.2.7 # bankiru/sinopia:1.4.0
+docker_sinopia_port: 4873
+docker_sinopia_url_prefix: ""
+docker_sinopia_registration: True
+# optional file path to initialize htpasswd. registration must be disabled to prevent data (user reg) loss.
+docker_sinopia_htpasswd_path: False
+
