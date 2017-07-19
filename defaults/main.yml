@@ -9,3 +9,9 @@ docker_sinopia_registration: True
 # optional file path to initialize htpasswd. registration must be disabled to prevent data (user reg) loss.
 docker_sinopia_htpasswd_path: False
 
+#defined by the container
+docker_sinopia_uid: 100
+
+docker_sinopia_users: []
+#  - username: admin
+#    password: admin

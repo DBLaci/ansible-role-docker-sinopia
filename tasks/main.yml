@@ -6,7 +6,7 @@
     state: directory
     recurse: yes
     mode: 0700
-    owner: 100
+    owner: "{{ docker_sinopia_uid }}"
   with_items:
     - "{{ docker_sinopia_host_path }}/storage"
     - "{{ docker_sinopia_host_path }}/conf"
@@ -16,26 +16,18 @@
     src: "config.yaml.j2"
     dest: "{{ docker_sinopia_host_path }}/conf/config.yaml"
     mode: 0600
-    owner: 100
+    owner: "{{ docker_sinopia_uid }}"
   notify: restart-sinopia
 
-
-
-
-#- debug: msg="{{ docker_sinopia_htpasswd_path  }}"
-
-- name: Check htpasswd and registration not enabled at the same time
-  fail:
-    msg: "docker_sinopia_htpasswd_path and docker_sinopia_registration must not be set together to prevent user loss!"
-  when: docker_sinopia_htpasswd_path and docker_sinopia_registration
-
-- name: Upload htpasswd
-  copy:
-    src: "{{ docker_sinopia_htpasswd_path }}"
-    dest: "{{ docker_sinopia_host_path }}/conf/htpasswd"
+- name: Generate htpasswd
+  htpasswd:
+    path: "{{ docker_sinopia_host_path }}/conf/htpasswd"
     mode: 0600
-    owner: 100
-  when: docker_sinopia_htpasswd_path and not docker_sinopia_registration
+    crypt_scheme: des_crypt
+    name: "{{ item.username }}"
+    password: "{{ item.password }}"
+  with_items: "{{ docker_sinopia_users }}"
+  when: docker_sinopia_htpasswd_path
   notify: restart-sinopia
 
 - name: Install container

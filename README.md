@@ -31,11 +31,7 @@ Usage
 -----
 
 To add users from config the suggested method is:
-- enable registration (docker_sinopia_registration: True - this is the default)
-- add users with npm adduser --registry https://sinopia.yourdomain.com
-- get storage/htpasswd from the container and save it to a file
-- set the saved file (encrypt with vault) path to docker_sinopia_htpasswd_path
-- disable registration: docker_sinopia_registration: False
+- set docker_sinopia_users to a list of objects with username/password.
 
 To authenticate npm in scripts:
 - npm login --registry https://sinopia.yourdomain.com
