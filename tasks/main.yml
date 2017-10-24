@@ -23,11 +23,12 @@
   htpasswd:
     path: "{{ docker_sinopia_host_path }}/conf/htpasswd"
     mode: 0600
+    owner: 100
     crypt_scheme: des_crypt
     name: "{{ item.username }}"
     password: "{{ item.password }}"
   with_items: "{{ docker_sinopia_users }}"
-  when: docker_sinopia_htpasswd_path
+  when: docker_sinopia_users
   notify: restart-sinopia
 
 - name: Install container
